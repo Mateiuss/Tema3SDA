@@ -55,6 +55,18 @@ int main()
         } else if (strstr(read_line, "pwd")) {
             pwd(curr_dir);
             printf("\n");
+        } else if (strstr(read_line, "find -f")) {
+            char *parser = strtok(read_line, " ");
+            parser = strtok(NULL, " ");
+            parser = strtok(NULL, " ");
+
+            find_f(curr_dir, parser);
+        } else if (strstr(read_line, "find -d")) {
+            char *parser = strtok(read_line, " ");
+            parser = strtok(NULL, " ");
+            parser = strtok(NULL, " ");
+
+            find_d(curr_dir, parser);
         } else if (strstr(read_line, "quit")) {
             break;
         }

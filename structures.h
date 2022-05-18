@@ -29,3 +29,5 @@ void rm(TArb curr_dir, char *name);
 void rmdir(TArb curr_dir, char *name);
 void cd(TArb *curr_dir, char *name);
 void pwd(TArb curr_dir);
+void find_f(TArb curr_dir, char *name);
+void find_d(TArb curr_dir, char *name);

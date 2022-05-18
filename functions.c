@@ -449,6 +449,9 @@ void rmdir(TArb curr_dir, char *name)
 void cd(TArb *curr_dir, char *name)
 {
     if (strcmp(name, "..") == 0) {
+        if (((TD)(*curr_dir)->info)->parent == NULL) {
+            return;
+        }
         *curr_dir = ((TD)(*curr_dir)->info)->parent;
         return;
     } else if (!search_dir(((TD)(*curr_dir)->info)->dir_root, name)) {
@@ -467,4 +470,112 @@ void pwd(TArb curr_dir)
     }
     pwd(((TD)curr_dir->info)->parent);
     printf("/%s", ((TD)curr_dir->info)->nume);
+}
+
+TArb search_in_file_tree(TArb file, char *name)
+{
+    if (!file) {
+        return NULL;
+    }
+    if (strcmp(((TF)file->info)->nume, name) == 0) {
+        return ((TF)file->info)->parent;
+    }
+    if (strcmp(((TF)file->info)->nume, name) > 0) {
+        return search_in_file_tree(file->st, name);
+    }
+    return search_in_file_tree(file->dr, name);
+}
+
+TArb search_in_dir_tree(TArb dir, char *name)
+{
+    if (!dir) {
+        return NULL;
+    }
+    TArb rez = search_in_file_tree(((TD)dir->info)->file_root, name);
+    if (rez) {
+        return rez;
+    }
+    TArb rez2 = search_in_dir_tree(dir->st, name);
+    if (rez2) {
+        return rez2;
+    }
+    rez2 = search_in_dir_tree(dir->dr, name);
+    if (rez2) {
+        return rez2;
+    }
+    rez2 = search_in_dir_tree(((TD)dir->info)->dir_root, name);
+    if (rez2) {
+        return rez2;
+    }
+    return NULL;
+}
+
+void find_f(TArb curr_dir, char *name)
+{
+    TArb search = search_in_file_tree(((TD)curr_dir->info)->file_root, name);
+    if (search) {
+        printf("File %s found!\n", name);
+        pwd(search);
+        printf("\n");
+        return;
+    }
+
+    search = search_in_dir_tree(((TD)curr_dir->info)->dir_root, name);
+    if (search) {
+        printf("File %s found!\n", name);
+        pwd(search);
+        printf("\n");
+        return;
+    }
+
+    printf("File %s not found!\n", name);
+}
+
+TArb search_dir_only(TArb a, char *name)
+{
+    if (!a) {
+        return NULL;
+    }
+    if (strcmp(((TD)a->info)->nume, name) == 0) {
+        return a;
+    }
+    TArb rez;
+    if (a->st) {
+        rez = search_dir_only(a->st, name);
+        if (rez) {
+            return rez;
+        }
+    }
+    if (a->dr) {
+        rez = search_dir_only(a->dr, name);
+        if (rez) {
+            return rez;
+        }
+    }
+    rez = search_dir_only(((TD)a->info)->dir_root, name);
+    if (rez) {
+        return rez;
+    }
+    return NULL;
+}
+
+void find_d(TArb curr_dir, char *name)
+{
+    if (strcmp(((TD)curr_dir->info)->nume, name) == 0) {
+        printf("Director %s found!\n", name);
+        pwd(curr_dir);
+        printf("\n");
+        return;
+    }
+
+    printf("name: %s and ", name);
+    TArb rez = search_dir_only(((TD)curr_dir->info)->dir_root, name);
+    printf("%p\n", rez);
+    if (!rez) {
+        printf("Director %s not found!\n", name);
+        return;
+    }
+    printf("Director %s found!\n", name);
+    pwd(rez);
+    printf("\n");
 }
