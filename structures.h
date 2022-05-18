@@ -23,6 +23,9 @@ typedef struct arbore {
 TArb init_root();
 int touch(TArb curr_dir, char *name);
 void ls(TArb curr_dir);
-void free_root(TArb *root);
+void free_root(TArb root);
 int mkdir(TArb curr_dir, char *name);
 void rm(TArb curr_dir, char *name);
+void rmdir(TArb curr_dir, char *name);
+void cd(TArb *curr_dir, char *name);
+void pwd(TArb curr_dir);

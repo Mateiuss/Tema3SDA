@@ -19,7 +19,8 @@ int main()
 
             int success = touch(curr_dir, parser);
             if (!success) {
-                free_root(&root);
+                free_root(root);
+                root = NULL;
                 curr_dir = NULL;
                 return 1;
             }
@@ -31,21 +32,36 @@ int main()
 
             int success = mkdir(curr_dir, parser);
             if (!success) {
-                free_root(&root);
+                free_root(root);
+                root = NULL;
                 curr_dir = NULL;
                 return 1;
             }
+        } else if (strstr(read_line, "rmdir")) {
+            char *parser = strtok(read_line, " ");
+            parser = strtok(NULL, " ");
+
+            rmdir(curr_dir, parser);
         } else if (strstr(read_line, "rm")) {
             char *parser = strtok(read_line, " ");
             parser = strtok(NULL, " ");
 
             rm(curr_dir, parser);
+        } else if (strstr(read_line, "cd")) {
+            char *parser = strtok(read_line, " ");
+            parser = strtok(NULL, " ");
+
+            cd(&curr_dir, parser);
+        } else if (strstr(read_line, "pwd")) {
+            pwd(curr_dir);
+            printf("\n");
         } else if (strstr(read_line, "quit")) {
             break;
         }
     }
 
-    free_root(&root);
+    free_root(root);
+    root = NULL;
 
     return 0;
 }
