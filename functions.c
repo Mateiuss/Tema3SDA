@@ -486,28 +486,19 @@ TArb search_in_file_tree(TArb file, char *name)
     return search_in_file_tree(file->dr, name);
 }
 
-TArb search_in_dir_tree(TArb dir, char *name)
+void search_in_dir_tree(TArb dir, TArb *found, char *name)
 {
     if (!dir) {
-        return NULL;
+        return;
     }
     TArb rez = search_in_file_tree(((TD)dir->info)->file_root, name);
     if (rez) {
-        return rez;
+        *found = rez;
+        return;
     }
-    TArb rez2 = search_in_dir_tree(dir->st, name);
-    if (rez2) {
-        return rez2;
-    }
-    rez2 = search_in_dir_tree(dir->dr, name);
-    if (rez2) {
-        return rez2;
-    }
-    rez2 = search_in_dir_tree(((TD)dir->info)->dir_root, name);
-    if (rez2) {
-        return rez2;
-    }
-    return NULL;
+    search_in_dir_tree(dir->st, found, name);
+    search_in_dir_tree(dir->dr, found, name);
+    search_in_dir_tree(((TD)dir->info)->dir_root, found, name);
 }
 
 void find_f(TArb curr_dir, char *name)
@@ -520,7 +511,7 @@ void find_f(TArb curr_dir, char *name)
         return;
     }
 
-    search = search_in_dir_tree(((TD)curr_dir->info)->dir_root, name);
+    search_in_dir_tree(((TD)curr_dir->info)->dir_root, &search, name);
     if (search) {
         printf("File %s found!\n", name);
         pwd(search);
@@ -531,32 +522,18 @@ void find_f(TArb curr_dir, char *name)
     printf("File %s not found!\n", name);
 }
 
-TArb search_dir_only(TArb a, char *name)
+void search_dir_only(TArb a, TArb *found, char *name)
 {
     if (!a) {
-        return NULL;
+        return;
     }
     if (strcmp(((TD)a->info)->nume, name) == 0) {
-        return a;
+        *found = a;
+        return;
     }
-    TArb rez;
-    if (a->st) {
-        rez = search_dir_only(a->st, name);
-        if (rez) {
-            return rez;
-        }
-    }
-    if (a->dr) {
-        rez = search_dir_only(a->dr, name);
-        if (rez) {
-            return rez;
-        }
-    }
-    rez = search_dir_only(((TD)a->info)->dir_root, name);
-    if (rez) {
-        return rez;
-    }
-    return NULL;
+    search_dir_only(a->st, found, name);
+    search_dir_only(a->dr, found, name);
+    search_dir_only(((TD)a->info)->dir_root, found, name);
 }
 
 void find_d(TArb curr_dir, char *name)
@@ -568,9 +545,8 @@ void find_d(TArb curr_dir, char *name)
         return;
     }
 
-    printf("name: %s and ", name);
-    TArb rez = search_dir_only(((TD)curr_dir->info)->dir_root, name);
-    printf("%p\n", rez);
+    TArb rez = NULL;
+    search_dir_only(((TD)curr_dir->info)->dir_root, &rez, name);
     if (!rez) {
         printf("Director %s not found!\n", name);
         return;

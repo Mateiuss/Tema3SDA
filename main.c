@@ -60,13 +60,13 @@ int main()
             parser = strtok(NULL, " ");
             parser = strtok(NULL, " ");
 
-            find_f(curr_dir, parser);
+            find_f(root, parser);
         } else if (strstr(read_line, "find -d")) {
             char *parser = strtok(read_line, " ");
             parser = strtok(NULL, " ");
             parser = strtok(NULL, " ");
 
-            find_d(curr_dir, parser);
+            find_d(root, parser);
         } else if (strstr(read_line, "quit")) {
             break;
         }
