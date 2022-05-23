@@ -635,12 +635,12 @@ void find_d(TArb curr_dir, char *name)
     search_dir_only(DIR_DIRROOT(curr_dir), &rez, name);
     // Daca nu l-am gasit, afisez acest rezultat si inchei apelul functiei
     if (!rez) {
-        printf("Director %s not found!\n", name);
+        printf("Directory %s not found!\n", name);
         return;
     }
 
     // Daca l-am gasit, afisez calea catre acesta si faptul ca l-am gasit
-    printf("Director %s found!\n", name);
+    printf("Directory %s found!\n", name);
     pwd(rez);
     printf("\n");
 }
